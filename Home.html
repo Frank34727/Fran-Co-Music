@@ -201,6 +201,19 @@
     readerCover.readAsDataURL(cover);
   }
 
+   const currentUser = JSON.parse(localStorage.getItem("loggedInUser"));
+  if (currentUser) {
+    const welcome = document.createElement("p");
+    welcome.className = "text-white p-3";
+    welcome.textContent = `🎉 Welcome, ${currentUser.username}!`;
+    document.body.prepend(welcome);
+  }
+
+  // Optional: Add logout button
+  function logout() {
+    localStorage.removeItem("loggedInUser");
+    window.location.href = "index.html";
+  }
 </script>
 
 </body>
