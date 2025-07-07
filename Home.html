@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Music Site - Upload & Play</title>
+
+  <!-- Bootstrap & FontAwesome -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet"/>
+
+  <style>
+    /* === Basic Theme Colors === */
+    body {
+      background-color: #121212;
+      color: white;
+    }
+    .sidebar {
+      height: 100vh;
+      background-color: #1e1e1e;
+    }
+    .sidebar a {
+      color: white;
+      text-decoration: none;
+      padding: 12px;
+      display: block;
+    }
+    .sidebar a:hover {
+      background-color: #2a2a2a;
+    }
+    .top-search {
+      background-color: #1e1e1e;
+      padding: 10px 20px;
+    }
+    .content-box {
+      background-color: #2a2a2a;
+      border-radius: 10px;
+      padding: 20px;
+      margin-top: 20px;
+    }
+    .music-player {
+      position: fixed;
+      bottom: 0;
+      left: 250px;
+      right: 0;
+      background-color: #1e1e1e;
+      padding: 10px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+  </style>
+</head>
+<body>
+
+<!-- === Main Container with Sidebar and Content === -->
+<div class="d-flex">
+  <!-- ========== SIDEBAR ========== -->
+  <div class="sidebar p-3" style="width: 250px;">
+    <h4 class="text-warning"> Fran-CO</h4>
+    <div class="text-center my-3">
+      <img src="../content/img/logo 2.png" class="rounded-circle" alt="Profile" width="95%">
+      <p class="text-truncate text-white mt-2">PerfectSoundwith FranCo Music...</p>
+    </div>
+    <a href=""><i class="fas fa-home"></i> Home</a>
+    <a href="./create.html"><i class="fas fa-plus-circle"></i> Create</a>
+    <a href="./library.html"><i class="fas fa-folder-open"></i> Library</a>
+    <a href="#"><i class="fas fa-compass"></i> Explore</a>
+    <a href="#"><i class="fas fa-search"></i> Search</a>
+    <a href="#"><i class="fas fa-bell"></i> Notifications</a>
+
+    <div class="mt-auto">
+      <div class="bg-danger p-3 rounded text-center">
+        <p>Go Pro<br><small>Unlock features</small></p>
+        <button class="btn btn-light btn-sm">Upgrade</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== MAIN CONTENT ========== -->
+  <div class="flex-grow-1">
+    
+    <!-- === Top Search Bar === -->
+    <div class="top-search d-flex justify-content-between align-items-center">
+      <input type="text" class="form-control w-50 me-3" placeholder="Create your own song"/>
+      <a href="./create.html">
+      <button class="btn btn-warning">Create <i class="fas fa-music"></i></button>
+      </a>
+    </div>
+
+    <!-- === Feature Section === -->
+    <div class="container">
+      <div class="content-box mt-4">
+        <span class="badge bg-danger mb-2">NEW FEATURES</span>
+        <h2>A whole new level of creative control.</h2>
+        <p>Unlock your inner artist, at any skill level. Start with a melody, phrase, or full song. Then break it open — split stems, play with the song structure, rewrite lyrics, remix the vibe.</p>
+        <button class="btn btn-light">#####</button>
+
+        <!-- === Feature Cards === -->
+        <div class="row mt-4">
+          <div class="col-md-4">
+            <div class="bg-dark p-3 rounded text-center">
+              <p>Stem Extraction</p>
+              <img src="https://via.placeholder.com/120x60" class="img-fluid" alt="Stem"/>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="bg-dark p-3 rounded text-center">
+              <h4>Music heal the Soul</h4>
+              <img src="../content/img/images.jpeg" class="img-fluid" alt="Editor" width="100%">
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="bg-dark p-3 rounded text-center">
+              <h4>Music is the future</h4>
+              <img src="../content/img/images.jpeg" class="" alt="Upload" width="100%">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- === MUSIC UPLOAD & PLAY SECTION === -->
+      <!-- === MUSIC UPLOAD & PLAY SECTION === -->
+<div class="content-box mt-4">
+  <h4 class="mb-3">Upload Your Music</h4>
+
+  <input type="text" id="artistName" class="form-control mb-2" placeholder="Artist Name" required />
+  <input type="text" id="songTitle" class="form-control mb-2" placeholder="Song Title" required />
+  <input type="file" id="coverImage" accept="image/*" class="form-control mb-2" />
+  <input type="file" id="musicFile" accept="audio/*" class="form-control mb-2" />
+
+  <button class="btn btn-warning w-100" onclick="uploadMusic()">Upload Music</button>
+</div>
+
+    <!-- === Fixed Bottom Music Player Bar === -->
+    <div class="music-player text-white">
+      
+    </div>
+
+  </div> <!-- End Main Content -->
+</div> <!-- End Flex -->
+
+<!-- === JavaScript (Bootstrap & Audio Logic) === -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  const fileInput = document.getElementById('audioFile');
+  const audioPlayer = document.getElementById('audioPlayer');
+  const fileName = document.getElementById('fileName');
+
+  fileInput.addEventListener('change', function () {
+    const file = this.files[0];
+    if (file) {
+      const url = URL.createObjectURL(file);
+      audioPlayer.src = url;
+      fileName.textContent = `Now Playing: ${file.name}`;
+      audioPlayer.load();
+      audioPlayer.play();
+    }
+  });
+
+ function uploadMusic() {
+    const artist = document.getElementById('artistName').value.trim();
+    const title = document.getElementById('songTitle').value.trim();
+    const cover = document.getElementById('coverImage').files[0];
+    const song = document.getElementById('musicFile').files[0];
+
+    if (!artist || !title || !cover || !song) {
+      alert("Please fill in all fields and upload both files.");
+      return;
+    }
+
+    const readerCover = new FileReader();
+    const readerSong = new FileReader();
+
+    readerCover.onload = function (e) {
+      const coverURL = e.target.result;
+
+      readerSong.onload = function (event) {
+        const songURL = event.target.result;
+
+        const musicData = {
+          artist,
+          title,
+          coverURL,
+          songURL,
+        };
+
+        // Save to localStorage
+        let library = JSON.parse(localStorage.getItem('musicLibrary')) || [];
+        library.push(musicData);
+        localStorage.setItem('musicLibrary', JSON.stringify(library));
+
+        alert("Music uploaded successfully!");
+        // Optional: Redirect to Library
+        // window.location.href = './library.html';
+      };
+
+      readerSong.readAsDataURL(song);
+    };
+
+    readerCover.readAsDataURL(cover);
+  }
+
+</script>
+
+</body>
+</html>

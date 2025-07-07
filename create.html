@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Create Your Song</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <style>
+    body {
+      background-color: #121212;
+      color: white;
+      padding: 20px;
+      font-family: Arial, sans-serif;
+    }
+    textarea {
+      resize: none;
+      height: 250px;
+    }
+    .preview-box {
+      background-color: #1e1e1e;
+      padding: 20px;
+      border-radius: 10px;
+      margin-top: 20px;
+    }
+    .loading {
+      font-style: italic;
+      color: orange;
+    }
+
+     .sidebar {
+      height: 100vh;
+      background-color: #1e1e1e;
+    }
+    .sidebar a {
+      color: white;
+      text-decoration: none;
+      padding: 12px;
+      display: block;
+    }
+    .sidebar a:hover {
+      background-color: #2a2a2a;
+    }
+
+  </style>
+</head>
+<body>
+
+      <div class="d-flex">
+  <!-- ========== SIDEBAR ========== -->
+  <div class="sidebar p-3" style="width: 250px;">
+    <h4 class="text-warning"> Fran-CO</h4>
+    <div class="text-center my-3">
+      <img src="../content/img/logo 2.png" class="rounded-circle" alt="Profile" width="95%">
+      <p class="text-truncate text-white mt-2">PerfectSoundwith FranCo Music...</p>
+    </div>
+    <a href="./Home.html"><i class="fas fa-home"></i> Home</a>
+    <a href="./create.html"><i class="fas fa-plus-circle"></i> Create</a>
+    <a href="./library.html"><i class="fas fa-folder-open"></i> Library</a>
+    <a href="#"><i class="fas fa-compass"></i> Explore</a>
+    <a href="#"><i class="fas fa-search"></i> Search</a>
+    <a href="#"><i class="fas fa-bell"></i> Notifications</a>
+
+    <div class="mt-auto">
+      <div class="bg-danger p-3 rounded text-center">
+        <p>Go Pro<br><small>Unlock features</small></p>
+        <button class="btn btn-light btn-sm">Upgrade</button>
+      </div>
+    </div>
+  </div>
+
+<div class="container">
+  <h2 class="text-warning mb-4 text-center"> Create Your Song</h2>
+
+  <!-- Lyrics Input -->
+  <div class="mb-3">
+    <label for="lyrics" class="form-label">Paste your lyrics below</label>
+    <textarea id="lyrics" class="form-control bg-dark text-white" placeholder="Type or paste your lyrics here..."></textarea>
+  </div>
+
+  <!-- Genre Selection -->
+  <div class="mb-3">
+    <label for="genre" class="form-label">Select Style</label>
+    <select id="genre" class="form-select bg-dark text-white">
+      <option value="afrobeat"> Afrobeat (Sing)</option>
+      <option value="rap"> Rap (Spoken/Rapped)</option>
+    </select>
+  </div>
+
+  <!-- Create Button -->
+   <a href="https://suno.ai/">
+  <button class="btn btn-warning btn btn-center" onclick="generateSong()"> Generate Song</button>
+  </a>
+
+  <!-- Loading / Generating Message -->
+  <p id="status" class="loading mt-3 d-none">Please wait... Generating your track </p>
+
+  <!-- Preview Section -->
+  <div id="previewSection" class="preview-box d-none">
+    <h5 class="mb-2"> AI Track Preview (Sample for Now)</h5>
+    <audio id="previewAudio" controls class="w-100 mb-3">
+      <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mp3"/>
+      Your browser does not support the audio element.
+    </audio>
+    <a id="downloadLink" href="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" download class="btn btn-light">⬇️ Download Song</a>
+  </div>
+</div>
+
+<!-- JavaScript -->
+<script>
+  async function generateSong() {
+    const lyrics = document.getElementById("lyrics").value.trim();
+    const status = document.getElementById("status");
+    const preview = document.getElementById("previewSection");
+    const audio = document.getElementById("previewAudio");
+    const download = document.getElementById("downloadLink");
+
+    if (!lyrics) {
+      alert("Please paste lyrics first.");
+      return;
+    }
+
+    status.classList.remove("d-none");
+    preview.classList.add("d-none");
+
+    try {
+      const response = await fetch("https://liberian-voice-only-api.replit.app/generate", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ lyrics: lyrics })
+      });
+
+      const data = await response.json();
+
+      if (data && data.audio_url) {
+        audio.src = data.audio_url;
+        download.href = data.audio_url;
+        preview.classList.remove("d-none");
+
+        // Save to localStorage (for library.html)
+        const songs = JSON.parse(localStorage.getItem("songs") || "[]");
+        songs.push({
+          lyrics: lyrics,
+          audio: data.audio_url,
+          created: new Date().toLocaleString()
+        });
+        localStorage.setItem("songs", JSON.stringify(songs));
+      } else {
+        alert("❌ AI did not return a valid song.");
+      }
+
+    } catch (err) {
+      alert("❌ Failed to connect to AI. Try again later.");
+    }
+
+    status.classList.add("d-none");
+  }
+</script>
+
+
+
+</body>
+</html>
