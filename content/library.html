@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Fran-Co Music Library</title>
+
+  <!-- Bootstrap & FontAwesome -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet"/>
+
+  <style>
+    body {
+      background-color: black;
+      color: white;
+    }
+    .sidebar {
+      min-height: 100vh;
+      background-color: #1e1e1e;
+    }
+    .sidebar a {
+      color: white;
+      text-decoration: none;
+      padding: 12px;
+      display: block;
+    }
+    .sidebar a:hover {
+      background-color: #2a2a2a;
+    }
+    @media (max-width: 768px) {
+      .sidebar {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="container-fluid">
+  <div class="row">
+    <!-- SIDEBAR -->
+    <nav class="col-md-3 col-lg-2 d-md-block sidebar p-3">
+      <h4 class="text-warning">Fran-CO</h4>
+      <div class="text-center my-3">
+        <img src="../content/img/logo 2.png" class="rounded-circle" alt="Profile" width="95%">
+        <p class="text-truncate text-white mt-2">PerfectSound with FranCo Music...</p>
+      </div>
+      <a href="Home.html"><i class="fas fa-home"></i> Home</a>
+      <a href="create.html"><i class="fas fa-plus-circle"></i> Create</a>
+      <a href="library.html"><i class="fas fa-folder-open"></i> Library</a>
+      <a href="#"><i class="fas fa-compass"></i> Explore</a>
+      <a href="#"><i class="fas fa-search"></i> Search</a>
+      <a href="#"><i class="fas fa-bell"></i> Notifications</a>
+    </nav>
+
+    <!-- MAIN CONTENT -->
+    <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+      <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mt-4 gap-2">
+        <h2>Music Library</h2>
+        <div class="input-group w-100 w-md-50">
+          <input type="text" class="form-control" id="searchInput" placeholder="Search by artist or title"/>
+          <button class="btn btn-warning" id="searchButton">
+            <i class="fas fa-search"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="row mt-4" id="librarySongs"></div>
+    </main>
+  </div>
+</div>
+
+<!-- Firebase and Logic -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
+  import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyCB_VrWHGQ7ZIa8RfU1hpStTK4d2euh1JQ",
+    authDomain: "francomusic-c6d4e.firebaseapp.com",
+    projectId: "francomusic-c6d4e",
+    storageBucket: "francomusic-c6d4e.appspot.com",
+    messagingSenderId: "589343387628",
+    appId: "1:589343387628:web:43ee54b1b3051ae1401ac9"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  const libraryContainer = document.getElementById('librarySongs');
+  const searchInput = document.getElementById('searchInput');
+  const searchButton = document.getElementById('searchButton');
+
+  let songs = [];
+
+  async function loadSongsFromFirebase() {
+    const querySnapshot = await getDocs(collection(db, "songs"));
+    songs = [];
+    querySnapshot.forEach((doc) => {
+      songs.push(doc.data());
+    });
+    displaySongs(songs);
+  }
+
+  function displaySongs(songList) {
+    libraryContainer.innerHTML = "";
+
+    if (songList.length === 0) {
+      libraryContainer.innerHTML = '<p class="text-light">No songs available.</p>';
+      return;
+    }
+
+    songList.forEach(song => {
+      const songCard = document.createElement("div");
+      songCard.className = "col-md-4 mb-4";
+      songCard.innerHTML = `
+        <div class="card bg-dark text-white h-100">
+          ${song.cover ? `<img src="${song.cover}" class="card-img-top" alt="Cover" style="height:200px; object-fit:cover;">` : ""}
+          <div class="card-body">
+            <h5 class="card-title">${song.title}</h5>
+            <p class="card-text">By ${song.artist}</p>
+            <audio controls class="w-100">
+              <source src="${song.music}" type="audio/mpeg">
+              Your browser does not support the audio element.
+            </audio>
+            <a href="${song.music}" download="${song.title}.mp3" class="btn btn-warning mt-2 w-100">Download</a>
+          </div>
+        </div>
+      `;
+      libraryContainer.appendChild(songCard);
+    });
+  }
+
+  function filterSongs() {
+    const term = searchInput.value.toLowerCase();
+    const filtered = songs.filter(song =>
+      song.title.toLowerCase().includes(term) ||
+      song.artist.toLowerCase().includes(term)
+    );
+    displaySongs(filtered);
+  }
+
+  // Trigger search on typing
+  searchInput.addEventListener("input", filterSongs);
+
+  // Trigger search on clicking button
+  searchButton.addEventListener("click", filterSongs);
+
+  // Load songs on page load
+  loadSongsFromFirebase();
+</script>
+</body>
+</html>
