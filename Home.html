@@ -123,10 +123,13 @@
       <!-- === MUSIC UPLOAD & PLAY SECTION === -->
 <div class="content-box mt-4">
   <h4 class="mb-3">Upload Your Music</h4>
-
+  <label for="">Artist Name</label><br>
   <input type="text" id="artistName" class="form-control mb-2" placeholder="Artist Name" required />
+   <label for="text-light">Song Title</label><br>
   <input type="text" id="songTitle" class="form-control mb-2" placeholder="Song Title" required />
+   <label for="">Song Cover</label><br>
   <input type="file" id="coverImage" accept="image/*" class="form-control mb-2" />
+   <label for="">Upload Music</label><br>
   <input type="file" id="musicFile" accept="audio/*" class="form-control mb-2" />
 
   <button class="btn btn-warning w-100" onclick="uploadMusic()">Upload Music</button>
